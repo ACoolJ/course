@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moje ksiazki</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0f6d12de;
+
+        }
+
+        header {
+            /* background-color: #204e22; */
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: linear-gradient(rgba(0, 0, 0, 0.5),
+                    rgba(0, 0, 0, 0.5));
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position-y: center;
+        }
+
+        main h1 {
+            padding-left: 20px;
+            margin-left: 10px;
+            opacity: 70%;
+            flex-grow: 1;
+        }
+
+        main {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+
+
+        }
+
+        #list-container {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 700px;
+            width: 100%;
+        }
+
+
+        #search-input {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #204e22;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition-property: background-color;
+        }
+
+
+        /* Obrazek dostosować ma się do szerokości kontenera url("https://cdn.pixabay.com/photo/2017/04/19/09/32/books-2241631_640.jpg")*/
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Inspirujące spacery po słowach– znajdź odpowiedź w świecie książek!</h1>
+
+        <input required type="text" id="search-input" placeholder="Wpisz słowo, tytuł lub autora ksiazki">
+        <button id="szukaj">Szukaj</button>
+    </header>
+
+    <main class="content">
+        <section class="centered">
+            <img src="https://cdn.pixabay.com/photo/2017/04/19/09/32/books-2241631_640.jpg" alt="Ksiażki w trawie"
+                width="280">
+        </section>
+        <main>
+            <div id="list-container">
+                <h1>Lista książek</h1>
+                <div id="books-list">
+                    <!-- Tutaj będzie wyświetlana lista kursów -->
+                </div>
+            </div>
+        </main>
+        <script>
+            const bookListId = "books-list";
+            function pokazwynik(bookList) {
+                const bookListElement = document.getElementById(bookListId);
+                bookListElement.innerHTML = '';
+
+                bookList.forEach(book => {
+                    const bookElement = document.createElement('div');
+                    bookElement.classList.add('book-item');
+                    bookElement.innerHTML = `
+                    <h2>${book.title}</h2>
+                    <p><strong>Autor:</strong>${book.author}</p>
+                    <p>${book.description}<p>`;
+                    if (book.archiveLink) {
+                        bookElement.innerHTML = bookElement.innerHTML + `<a href="${book.archiveLink}">Przejdź do ksiązki</a>`
+                    }
+                    else {
+                        bookElement.innerHTML = bookElement.innerHTML + `<p>Brak linku do książki</p>`;
+                    }
+                    bookListElement.appendChild(bookElement);
+                });
+
+            }
+
+            function pokazLadowanie() {
+                const bookListElement = document.getElementById(bookListId);
+                bookListElement.innerHTML = '';
+                const loadingElement = document.createElement('div')
+                loadingElement.classList.add('loading-message')
+                loadingElement.innerHTML = `<h2>Ładowanie...</h2>`;
+                bookListElement.appendChild(loadingElement)
+
+            }
+        </script>
+        <script>
+            document.getElementById('szukaj').addEventListener('click'
+                , function () {
+                    console.log('kliknieto mnie');
+                    const pole = document.getElementById('search-input').value
+                    pokazLadowanie()
+
+                    // Link do dokumentacji: https://openlibrary.org/dev/docs/api/search
+                    const dane_promise = fetch('https://openlibrary.org/search.json?q=' + pole + '&fields=title,author_name,first_sentence,ia')
+                        .then(res => {
+                            if (!res.ok) {
+                                throw new Error(`Błąd HTTP: ${res.status}`);
+                            }
+
+                            return res.json();
+                        })
+                        //funkcja zwraca elementy listy -tytuł, autor, link, numer ia 
+                        .then(res => {
+                            return res.docs.map(book => ({
+                                title: book.title,
+                                author: book.author_name ? book.author_name.join(',') : 'Nieznany autor',
+                                description: book.first_senstence ? book.first_sentence[0] : 'Brak opisu',
+                                archiveLink: book.ia ? `https://archive.org/details/${book.ia[0]}` : null //internet  archive.org
+
+                            }));
+                        })
+                        .catch(error => {
+                            console.error('Wystapił błąd:', error);
+                            return [];
+                        })
+                    dane_promise.then(bookList => pokazwynik(bookList))
+                })
+
+
+        </script>
+
+
+
+
+</body>
+
+</html>
