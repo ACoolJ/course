@@ -10,8 +10,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #0f6d12de;
-
+            background-color: #628b63de;
         }
 
         header {
@@ -23,7 +22,7 @@
             top: 0;
             z-index: 1;
             background: linear-gradient(rgba(0, 0, 0, 0.5),
-                    rgba(0, 0, 0, 0.5));
+                    rgba(0, 0, 0, 0.5)), url("https://cdn.pixabay.com/photo/2017/04/19/09/32/books-2241631_640.jpg");
             background-repeat: no-repeat;
             background-size: cover;
             background-position-y: center;
@@ -40,8 +39,6 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-
-
         }
 
         #list-container {
@@ -66,13 +63,42 @@
             border: none;
             cursor: pointer;
             transition-property: background-color;
+            transition-duration: 0.1s;
         }
 
+        button:hover {
+            background-color: #0f6d12;
+        }
 
-        /* Obrazek dostosować ma się do szerokości kontenera url("https://cdn.pixabay.com/photo/2017/04/19/09/32/books-2241631_640.jpg")*/
+        #books-list {
+            padding: 20px;
+        }
+
+        .book-item {
+            background-color: rgb(247, 242, 242);
+            padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 50%;
+        }
+
         img {
             max-width: 100%;
+            /* Obrazek dostosowuje się do szerokości kontenera */
             height: auto;
+        }
+
+        @media (max-width: 768px) {
+
+            .menu,
+            .footer {
+                padding: 10px;
+            }
+
+            .content {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -86,10 +112,7 @@
     </header>
 
     <main class="content">
-        <section class="centered">
-            <img src="https://cdn.pixabay.com/photo/2017/04/19/09/32/books-2241631_640.jpg" alt="Ksiażki w trawie"
-                width="280">
-        </section>
+        
         <main>
             <div id="list-container">
                 <h1>Lista książek</h1>
@@ -112,7 +135,7 @@
                     <p><strong>Autor:</strong>${book.author}</p>
                     <p>${book.description}<p>`;
                     if (book.archiveLink) {
-                        bookElement.innerHTML = bookElement.innerHTML + `<a href="${book.archiveLink}">Przejdź do ksiązki</a>`
+                        bookElement.innerHTML = bookElement.innerHTML + `<a href="${book.archiveLink}" target = '_blank' >Przejdź do ksiązki</a>`
                     }
                     else {
                         bookElement.innerHTML = bookElement.innerHTML + `<p>Brak linku do książki</p>`;
